@@ -130,6 +130,13 @@ class Trainer(object):
         """
         raise UnityTrainerException("The update_model method was not implemented.")
 
+    def set_model(self, model):
+        """
+        Set's the neural networ model to parameter model
+        :param model (TODO what kind of parameter should this be)
+        """
+        raise UnityTrainerException("The set_model method was not implemented.")
+
     def write_summary(self, global_step, lesson_num=0):
         """
         Saves training statistics to Tensorboard.
