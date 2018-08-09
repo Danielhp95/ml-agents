@@ -260,7 +260,7 @@ class TrainerController(object):
             self._export_graph()
 
     def handle_step(self, curr_info, global_step, saver, sess):
-        curr_info = self.check_for_episode_termination(curr_info)
+        curr_info = self.handle_episode_termination(curr_info)
         take_action_memories, \
         take_action_outputs, \
         take_action_text, \
@@ -307,7 +307,7 @@ class TrainerController(object):
         else:
             sess.run(init)
 
-    def check_for_episode_termination(self, curr_info):
+    def handle_episode_termination(self, curr_info):
         if self.env.global_done:
             if self.meta_curriculum is not None:
                 self.meta_curriculum.increment_lessons(self._get_progresses())
