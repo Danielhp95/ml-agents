@@ -11,13 +11,19 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.tools import freeze_graph
 from unityagents.environment import UnityEnvironment
-from unityagents.exception import UnityEnvironmentException
+from unityagents.exception import UnityEnvironmentException, UnityException
 
 from unitytrainers.ppo.trainer import PPOTrainer
 from unitytrainers.bc.trainer import BehavioralCloningTrainer
 from unitytrainers.meta_curriculum import MetaCurriculum
 from unitytrainers.exception import MetaCurriculumError
 
+
+class UnityTrainerControllerException(UnityException):
+    """
+    Related to errors with the TrainerController.
+    """
+    pass
 
 class TrainerController(object):
     def __init__(self, env_path, run_id, save_freq, curriculum_folder, fast_simulation, load, train,
@@ -259,23 +265,6 @@ class TrainerController(object):
         if self.train_model:
             self._export_graph()
 
-    def handle_step(self, curr_info, global_step, saver, sess):
-        curr_info = self.handle_episode_termination(curr_info)
-        take_action_memories, \
-        take_action_outputs, \
-        take_action_text, \
-        take_action_value, \
-        take_action_vector = self.get_actions_from_brains(curr_info)
-        new_info = self.env.step(vector_action=take_action_vector, memory=take_action_memories,
-                                 text_action=take_action_text, value=take_action_value)
-        self.process_new_environment_state(curr_info, global_step, new_info, take_action_outputs)
-        global_step += 1
-        if global_step % self.save_freq == 0 and global_step != 0 and self.train_model:
-            # Save Tensorflow model
-            self._save_model(sess, steps=global_step, saver=saver)
-        curr_info = new_info
-        return global_step
-
     def initialise_training_environment(self, sess, trainer_config):
         self._initialize_trainers(trainer_config, sess)
         for _, t in self.trainers.items():
@@ -306,6 +295,23 @@ class TrainerController(object):
             saver.restore(sess, ckpt.model_checkpoint_path)
         else:
             sess.run(init)
+
+    def handle_step(self, curr_info, global_step, saver, sess):
+        curr_info = self.handle_episode_termination(curr_info)
+        take_action_memories, \
+        take_action_outputs, \
+        take_action_text, \
+        take_action_value, \
+        take_action_vector = self.get_actions_from_brains(curr_info)
+        new_info = self.env.step(vector_action=take_action_vector, memory=take_action_memories,
+                                 text_action=take_action_text, value=take_action_value)
+        self.process_new_environment_state(curr_info, global_step, new_info, take_action_outputs)
+        global_step += 1
+        if global_step % self.save_freq == 0 and global_step != 0 and self.train_model:
+            # Save Tensorflow model
+            self._save_model(sess, steps=global_step, saver=saver)
+        curr_info = new_info
+        return global_step
 
     def handle_episode_termination(self, curr_info):
         if self.env.global_done:
