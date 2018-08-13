@@ -25,6 +25,7 @@ class UnityTrainerControllerException(UnityException):
     """
     pass
 
+
 class TrainerController(object):
     def __init__(self, env_path, run_id, save_freq, curriculum_folder, fast_simulation, load, train,
                  worker_id, keep_checkpoints, lesson, seed, docker_target_name, trainer_config_path,
@@ -297,7 +298,8 @@ class TrainerController(object):
             sess.run(init)
 
     def handle_step(self, curr_info, global_step, saver, sess):
-        curr_info = self.handle_episode_termination(curr_info)
+        curr_info = self.handle_episode_termination(curr_info, sess)
+
         take_action_memories, \
         take_action_outputs, \
         take_action_text, \
@@ -307,13 +309,18 @@ class TrainerController(object):
                                  text_action=take_action_text, value=take_action_value)
         self.process_new_environment_state(curr_info, global_step, new_info, take_action_outputs)
         global_step += 1
-        if global_step % self.save_freq == 0 and global_step != 0 and self.train_model:
-            # Save Tensorflow model
-            self._save_model(sess, steps=global_step, saver=saver)
+
+        self.save_models_and_checkpoints(sess, global_step, saver)
+
         curr_info = new_info
         return global_step
 
-    def handle_episode_termination(self, curr_info):
+    def save_models_and_checkpoints(self, sess, global_step, global_saver):
+        if global_step % self.save_freq == 0 and global_step != 0 and self.train_model:
+            # Save Tensorflow model
+            self._save_model(sess, steps=global_step, saver=global_saver)
+
+    def handle_episode_termination(self, curr_info, sess):
         if self.env.global_done:
             if self.meta_curriculum is not None:
                 self.meta_curriculum.increment_lessons(self._get_progresses())
