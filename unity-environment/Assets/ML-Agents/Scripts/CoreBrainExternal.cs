@@ -72,12 +72,10 @@ namespace MLAgents
 #if UNITY_EDITOR			
 			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 			EditorGUILayout.BeginHorizontal();
-			
-            var ebt = serializedBrain.FindProperty("externalBrainType");
-            serializedBrain.Update();
+			var ebt = serializedBrain.FindProperty("externalBrainType");
+			serializedBrain.Update();
 			EditorGUILayout.PropertyField(ebt , true);
-            serializedBrain.ApplyModifiedProperties();
-			
+			serializedBrain.ApplyModifiedProperties();
 			EditorGUILayout.EndHorizontal();
 #endif		   
         }
