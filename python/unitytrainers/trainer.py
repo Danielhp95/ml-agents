@@ -35,13 +35,8 @@ class Trainer(object):
         self.sess = sess
         self.stats = {}
         self.summary_writer = None
-        if 'self_play' in trainer_parameters:
-            if bool(trainer_parameters['self_play']):
-                self.is_main = True
-                self.is_ghost = False
-            else:
-                self.is_main = False
-                self.is_ghost = True
+        if 'self_play' in trainer_parameters and bool(trainer_parameters['self_play']):
+            self.is_main = bool(trainer_parameters['is_main'])
 
     def __str__(self):
         return '''Empty Trainer'''
