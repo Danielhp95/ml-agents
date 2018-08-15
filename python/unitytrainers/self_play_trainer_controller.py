@@ -22,10 +22,10 @@ class SelfPlayTrainerController(TrainerController):
     def _initialize_trainers(self, trainer_config, sess):
         super(SelfPlayTrainerController, self)._initialize_trainers(trainer_config, sess)
 
-        self.ghost_trainers = {brain_name: trainer for brain_name, trainer in self.trainers.items() if trainer.is_ghost() and not trainer.is_main()}
+        self.ghost_trainers = {brain_name: trainer for brain_name, trainer in self.trainers.items() if not trainer.is_main}
 
         try:
-            self.main_brain_name, self.main_brain_trainer = next((brain_name, trainer) for brain_name, trainer in self.trainers.items() if trainer.is_ghost() and trainer.is_main())
+            self.main_brain_name, self.main_brain_trainer = next((brain_name, trainer) for brain_name, trainer in self.trainers.items() if trainer.is_main)
         except StopIteration:
             raise UnityTrainerControllerException("Could not find a main brain to use in the self-play system. Make sure that one brain has the flag \"is_main\".")
 
@@ -55,14 +55,14 @@ class SelfPlayTrainerController(TrainerController):
     def create_variable_mapping(self, from_scope, to_scope):
         """
         Creates dictionary of string variable brains from :param from_Brain: to
-        :param to_scope: to be used in a tf.train.Saver
-        :param to_scope: tf.Variables to be used in a tf.train.Saver
+        :param from_scope: Name of the scope whose variables are going to be read from.
+        :param to_scope: Name of the scope whose variables are going to be read to.
         :return: Dictionary mapping string variable names of scope :param from_scope: to the tf.Variable
         of scope :parm to_scop:
         """
-        variables_from_brain = tf.get_collection(tf.GraphKeys.GLOBAL_VARAIBLES, scope=from_scope)
+        variables_from_scope = tf.get_collection(tf.GraphKeys.GLOBAL_VARAIBLES, scope=from_scope)
         variables_to_scope   = tf.get_collection(tf.GraphKeys.GLOBAL_VARAIBLES, scope=to_scope)
-        mapping = dict(zip(map(lambda x: x.name[:-2], variables_from_brain), variables_to_scope))
+        mapping = dict(zip(map(lambda x: x.name[:-2], variables_from_scope), variables_to_scope))
         return mapping
 
     def save_models_and_checkpoints(self, sess, global_step, global_saver):
