@@ -40,46 +40,17 @@ public class SoccerHitWall : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("iWall"))
         {
-            if (collision.gameObject.name == "wallA")
+            if (collision.gameObject.name == "goalA")
             {
-                if (lastAgentHit == 0)
-                {
-                    agentA.AddReward(-0.01f);
-                    agentB.SetReward(0);
-                }
-                else
-                {
-                    agentA.SetReward(0);
-                    agentB.AddReward(-0.01f);
-                }
+                agentA.AddReward(-1f);
+                agentB.AddReward(1f);
+                Reset();
             }
-            else if (collision.gameObject.name == "wallB")
+            else if (collision.gameObject.name == "goalB")
             {
-                if (lastAgentHit == 0)
-                {
-                    agentA.AddReward(-0.01f);
-                    agentB.SetReward(0);
-                }
-                else
-                {
-                    agentA.SetReward(0);
-                    agentB.AddReward(-0.01f);
-                }
-            }
-            else if (collision.gameObject.name == "net")
-            {
-                if (lastAgentHit == 0)
-                {
-                    agentA.AddReward(-0.01f);
-                    agentB.SetReward(0);
-                    Reset();
-                }
-                else
-                {
-                    agentA.SetReward(0);
-                    agentB.AddReward(-0.01f);
-                    Reset();
-                }
+                agentA.AddReward(1f);
+                agentB.AddReward(-1f);
+                Reset();
             }
         }
 

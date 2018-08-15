@@ -12,6 +12,7 @@ public class BoxSoccerAgent : Agent
     public bool invertX;
     public float jumpForce;
     public float groundMovementForce;
+    public float maxSpeed;
 
     private Rigidbody agentRb;
     private Rigidbody ballRb;
@@ -49,7 +50,10 @@ public class BoxSoccerAgent : Agent
         }
 
         Vector3 directionVector = new Vector3(direction, 0, 0);
-        agentRb.AddForce(directionVector * groundMovementForce, ForceMode.VelocityChange);
+        if (System.Math.Abs( agentRb.velocity.x) < maxSpeed )
+        {
+            agentRb.AddForce(directionVector * groundMovementForce, ForceMode.VelocityChange);
+        }
     }
 
     private static int GetDirection(int action)
