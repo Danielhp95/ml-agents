@@ -19,34 +19,17 @@ public class SoccerHitWall : MonoBehaviour
         agentB = area.agentB.GetComponent<BoxSoccerAgent>();
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.name == "over")
-        {
-            if (lastAgentHit == 0)
-            {
-                agentA.AddReward(0.1f);
-            }
-            else
-            {
-                agentB.AddReward(0.1f);
-            }
-            lastAgentHit = 0;
-
-        }
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("iWall"))
         {
-            if (collision.gameObject.name == "goalA")
+            if (collision.gameObject.name == "goalB")
             {
                 agentA.AddReward(-1f);
                 agentB.AddReward(1f);
                 Reset();
             }
-            else if (collision.gameObject.name == "goalB")
+            else if (collision.gameObject.name == "goalA")
             {
                 agentA.AddReward(1f);
                 agentB.AddReward(-1f);
