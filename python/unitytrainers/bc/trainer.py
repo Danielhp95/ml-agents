@@ -19,7 +19,7 @@ logger = logging.getLogger("unityagents")
 class BehavioralCloningTrainer(Trainer):
     """The ImitationTrainer is an implementation of the imitation learning."""
 
-    def __init__(self, sess, env, brain_name, trainer_parameters, training, seed):
+    def __init__(self, sess, env, brain_name, trainer_parameters, training, seed, run_id):
         """
         Responsible for collecting experiences and training PPO model.
         :param sess: Tensorflow session.
@@ -36,7 +36,7 @@ class BehavioralCloningTrainer(Trainer):
                 raise UnityTrainerException("The hyperparameter {0} could not be found for the Imitation trainer of "
                                             "brain {1}.".format(k, brain_name))
 
-        super(BehavioralCloningTrainer, self).__init__(sess, env, brain_name, trainer_parameters, training)
+        super(BehavioralCloningTrainer, self).__init__(sess, env, brain_name, trainer_parameters, training, run_id)
 
         self.variable_scope = trainer_parameters['graph_scope']
         self.brain_to_imitate = trainer_parameters['brain_to_imitate']
@@ -54,10 +54,7 @@ class BehavioralCloningTrainer(Trainer):
 
         self.training_buffer = Buffer()
         self.is_continuous_action = (env.brains[brain_name].vector_action_space_type == "continuous")
-        self.is_continuous_observation = (env.brains[brain_name].vector_observation_space_type == "continuous")
         self.use_visual_observations = (env.brains[brain_name].number_visual_observations > 0)
-        if self.use_visual_observations:
-            logger.info('Cannot use observations with imitation learning')
         self.use_vector_observations = (env.brains[brain_name].vector_observation_space_size > 0)
         self.summary_path = trainer_parameters['summary_path']
         if not os.path.exists(self.summary_path):
@@ -154,10 +151,10 @@ class BehavioralCloningTrainer(Trainer):
                 agent_brain.memories = np.zeros((len(agent_brain.agents), self.m_size))
             feed_dict[self.model.memory_in] = agent_brain.memories
             agent_action, memories = self.sess.run(self.inference_run_list, feed_dict)
-            return agent_action, memories, None, None
+            return agent_action, memories, None, None, None
         else:
             agent_action = self.sess.run(self.inference_run_list, feed_dict)
-        return agent_action, None, None, None
+        return agent_action, None, None, None, None
 
     def add_experiences(self, curr_info: AllBrainInfo, next_info: AllBrainInfo, take_action_outputs):
         """
@@ -292,12 +289,8 @@ class BehavioralCloningTrainer(Trainer):
             else:
                 feed_dict[self.model.true_action] = np.array(_buffer['actions'][start:end]).reshape([-1])
             if self.use_vector_observations:
-                if not self.is_continuous_observation:
-                    feed_dict[self.model.vector_in] = np.array(_buffer['vector_observations'][start:end])\
-                        .reshape([-1, self.brain.num_stacked_vector_observations])
-                else:
-                    feed_dict[self.model.vector_in] = np.array(_buffer['vector_observations'][start:end])\
-                        .reshape([-1, self.brain.vector_observation_space_size * self.brain.num_stacked_vector_observations])
+                feed_dict[self.model.vector_in] = np.array(_buffer['vector_observations'][start:end])\
+                    .reshape([-1, self.brain.vector_observation_space_size * self.brain.num_stacked_vector_observations])
             if self.use_visual_observations:
                 for i, _ in enumerate(self.model.visual_in):
                     _obs = np.array(_buffer['visual_observations%d' % i][start:end])

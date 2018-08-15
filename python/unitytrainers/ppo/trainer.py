@@ -19,7 +19,7 @@ logger = logging.getLogger("unityagents")
 class PPOTrainer(Trainer):
     """The PPOTrainer is an implementation of the PPO algorithm."""
 
-    def __init__(self, sess, env, brain_name, trainer_parameters, training, seed):
+    def __init__(self, sess, env, brain_name, trainer_parameters, training, seed, run_id):
         """
         Responsible for collecting experiences and training PPO model.
         :param sess: Tensorflow session.
@@ -38,7 +38,7 @@ class PPOTrainer(Trainer):
                 raise UnityTrainerException("The hyperparameter {0} could not be found for the PPO trainer of "
                                             "brain {1}.".format(k, brain_name))
 
-        super(PPOTrainer, self).__init__(sess, env, brain_name, trainer_parameters, training)
+        super(PPOTrainer, self).__init__(sess, env, brain_name, trainer_parameters, training, run_id)
 
         self.use_recurrent = trainer_parameters["use_recurrent"]
         self.use_curiosity = bool(trainer_parameters['use_curiosity'])
@@ -86,7 +86,6 @@ class PPOTrainer(Trainer):
         self.cumulative_rewards = {}
         self.episode_steps = {}
         self.is_continuous_action = (env.brains[brain_name].vector_action_space_type == "continuous")
-        self.is_continuous_observation = (env.brains[brain_name].vector_observation_space_type == "continuous")
         self.use_visual_obs = (env.brains[brain_name].number_visual_observations > 0)
         self.use_vector_obs = (env.brains[brain_name].vector_observation_space_size > 0)
         self.summary_path = trainer_parameters['summary_path']
@@ -101,8 +100,7 @@ class PPOTrainer(Trainer):
             self.inference_run_list.append(self.model.output_pre)
         if self.use_recurrent:
             self.inference_run_list.extend([self.model.memory_out])
-        if (self.is_training and self.is_continuous_observation and
-                self.use_vector_obs and self.trainer_parameters['normalize']):
+        if self.is_training and self.use_vector_obs and self.trainer_parameters['normalize']:
             self.inference_run_list.extend([self.model.update_mean, self.model.update_variance])
 
     def __str__(self):
@@ -169,7 +167,7 @@ class PPOTrainer(Trainer):
         """
         curr_brain_info = all_brain_info[self.brain_name]
         if len(curr_brain_info.agents) == 0:
-            return [], [], [], None
+            return [], [], [], None, None
 
         feed_dict = {self.model.batch_size: len(curr_brain_info.vector_observations),
                      self.model.sequence_length: 1}
@@ -192,9 +190,9 @@ class PPOTrainer(Trainer):
         self.stats['entropy'].append(run_out[self.model.entropy].mean())
         self.stats['learning_rate'].append(run_out[self.model.learning_rate])
         if self.use_recurrent:
-            return run_out[self.model.output], run_out[self.model.memory_out], None, run_out
+            return run_out[self.model.output], run_out[self.model.memory_out], None, run_out[self.model.value], run_out
         else:
-            return run_out[self.model.output], None, None, run_out
+            return run_out[self.model.output], None, None, run_out[self.model.value], run_out
 
     def construct_curr_info(self, next_info: BrainInfo) -> BrainInfo:
         """
@@ -319,7 +317,7 @@ class PPOTrainer(Trainer):
                             self.training_buffer[agent_id]['visual_obs%d' % i].append(
                                 stored_info.visual_observations[i][idx])
                             self.training_buffer[agent_id]['next_visual_obs%d' % i].append(
-                                next_info.visual_observations[i][idx])
+                                next_info.visual_observations[i][next_idx])
                     if self.use_vector_obs:
                         self.training_buffer[agent_id]['vector_obs'].append(stored_info.vector_observations[idx])
                         self.training_buffer[agent_id]['next_vector_in'].append(
@@ -463,20 +461,13 @@ class PPOTrainer(Trainer):
                     if self.use_recurrent:
                         feed_dict[self.model.prev_action] = np.array(buffer['prev_action'][start:end]).flatten()
                 if self.use_vector_obs:
-                    if self.is_continuous_observation:
-                        total_observation_length = self.brain.vector_observation_space_size * \
-                                                   self.brain.num_stacked_vector_observations
-                        feed_dict[self.model.vector_in] = np.array(buffer['vector_obs'][start:end]).reshape(
-                            [-1, total_observation_length])
-                        if self.use_curiosity:
-                            feed_dict[self.model.next_vector_in] = np.array(buffer['next_vector_in'][start:end]) \
-                                .reshape([-1, total_observation_length])
-                    else:
-                        feed_dict[self.model.vector_in] = np.array(buffer['vector_obs'][start:end]).reshape(
-                            [-1, self.brain.num_stacked_vector_observations])
-                        if self.use_curiosity:
-                            feed_dict[self.model.next_vector_in] = np.array(buffer['next_vector_in'][start:end]) \
-                                .reshape([-1, self.brain.num_stacked_vector_observations])
+                    total_observation_length = self.brain.vector_observation_space_size * \
+                                               self.brain.num_stacked_vector_observations
+                    feed_dict[self.model.vector_in] = np.array(buffer['vector_obs'][start:end]).reshape(
+                        [-1, total_observation_length])
+                    if self.use_curiosity:
+                        feed_dict[self.model.next_vector_in] = np.array(buffer['next_vector_in'][start:end]) \
+                            .reshape([-1, total_observation_length])
                 if self.use_visual_obs:
                     for i, _ in enumerate(self.model.visual_in):
                         _obs = np.array(buffer['visual_obs%d' % i][start:end])

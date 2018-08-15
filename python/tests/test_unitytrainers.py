@@ -1,3 +1,4 @@
+import json
 import yaml
 import unittest.mock as mock
 import pytest
@@ -7,7 +8,9 @@ from unitytrainers.buffer import Buffer
 from unitytrainers.models import *
 from unitytrainers.ppo.trainer import PPOTrainer
 from unitytrainers.bc.trainer import BehavioralCloningTrainer
-from unityagents import UnityEnvironmentException
+from unitytrainers.curriculum import Curriculum
+from unitytrainers.exception import CurriculumError
+from unityagents.exception import UnityEnvironmentException
 from .mock_communicator import MockCommunicator
 
 dummy_start = '''{
@@ -24,8 +27,7 @@ dummy_start = '''{
       "memorySize": 0,
       "cameraResolutions": [],
       "vectorActionDescriptions": ["",""],
-      "vectorActionSpaceType": 1,
-      "vectorObservationSpaceType": 1
+      "vectorActionSpaceType": 1
       }]
 }'''.encode()
 
