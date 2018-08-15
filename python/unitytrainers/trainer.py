@@ -35,6 +35,13 @@ class Trainer(object):
         self.sess = sess
         self.stats = {}
         self.summary_writer = None
+        if 'self_play' in trainer_parameters:
+            if bool(trainer_parameters['self_play']):
+                self.is_main = True
+                self.is_ghost = False
+            else:
+                self.is_main = False
+                self.is_ghost = True
 
     def __str__(self):
         return '''Empty Trainer'''
@@ -129,13 +136,6 @@ class Trainer(object):
         Uses training_buffer to update model.
         """
         raise UnityTrainerException("The update_model method was not implemented.")
-
-    def set_model(self, model):
-        """
-        Set's the neural networ model to parameter model
-        :param model (TODO what kind of parameter should this be)
-        """
-        raise UnityTrainerException("The set_model method was not implemented.")
 
     def write_summary(self, global_step, lesson_num=0):
         """
