@@ -35,6 +35,13 @@ class Trainer(object):
         self.sess = sess
         self.stats = {}
         self.summary_writer = None
+        if 'self_play' in trainer_parameters:
+            if bool(trainer_parameters['self_play']):
+                self.is_main = True
+                self.is_ghost = False
+            else:
+                self.is_main = False
+                self.is_ghost = True
 
     def __str__(self):
         return '''Empty Trainer'''
@@ -170,17 +177,3 @@ class Trainer(object):
         except:
             logger.info("Cannot write text summary for Tensorboard. Tensorflow version must be r1.2 or above.")
             pass
-
-    def is_ghost(self):
-        """
-        Checks if the trainer's brain is a ghost brain
-        :return is_ghost: A boolean true iff the trainer's brain is a ghost
-        """
-        raise UnityTrainerException("The is_ghost method was not implemented.")
-
-    def set_model(self, model_checkpoint_path):
-        """
-        set the model of this trainer's brain to the state provided by the checkpoint
-        :param model_checkpoint: The TF model variables of this trainer's scope
-        """
-        raise UnityTrainerException("The set_model method was not implemented.")
