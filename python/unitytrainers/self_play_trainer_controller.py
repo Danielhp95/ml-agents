@@ -84,9 +84,12 @@ class SelfPlayTrainerController(TrainerController):
         super(SelfPlayTrainerController, self).handle_episode_termination(curr_info, sess)
         self.elapsed_episodes += 1
         if self.should_change_ghost_model():
-            for brain_name, saver in self.ghost_trainers.items():
-                sampled_policy_checkpoint = self.sample_ghost_model()
-                self.ghost_trainer_savers[brain_name].restore(sess, sampled_policy_checkpoint)
+            self.resample_all_ghosts(sess)
+
+    def resample_all_ghosts(self, sess):
+        for brain_name, saver in self.ghost_trainers.items():
+            sampled_policy_checkpoint = self.sample_ghost_model()
+            self.ghost_trainer_savers[brain_name].restore(sess, sampled_policy_checkpoint)
 
     def should_change_ghost_model(self):
         """
