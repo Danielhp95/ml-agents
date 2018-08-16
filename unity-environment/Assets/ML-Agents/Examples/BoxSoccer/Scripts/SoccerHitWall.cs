@@ -39,7 +39,14 @@ public class SoccerHitWall : MonoBehaviour
 
         if (collision.gameObject.CompareTag("agent"))
         {
-            lastAgentHit = collision.gameObject.name == "AgentA" ? 0 : 1;
+            lastAgentHit = collision.gameObject.name == "BoxA" ? 0 : 1;
+            if(lastAgentHit == 0)
+            {
+                agentA.AddReward(0.05f);
+            } else
+            {
+                agentB.AddReward(0.05f);
+            }
         }
     }
 
