@@ -15,7 +15,7 @@ class SelfPlayTrainerController(TrainerController):
                                                         load, train, worker_id, keep_checkpoints,
                                                         lesson, seed, docker_target_name, trainer_config_path,
                                                         no_graphics)
-        self.ghost_trainers_path = self.model_path + 'ghost/'
+        self.ghost_trainers_path = self.model_path + 'self-play-checkpoints/'
         if not os.path.exists(self.ghost_trainers_path):
             os.makedirs(self.ghost_trainers_path)
 
