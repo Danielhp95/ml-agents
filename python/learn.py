@@ -9,7 +9,7 @@ import numpy as np
 from docopt import docopt
 
 
-from unitytrainers.trainer_controller import TrainerController
+from unitytrainers.self_play_trainer_controller import SelfPlayTrainerController
 from unitytrainers.exception import TrainerError
 
 if __name__ == '__main__':
@@ -83,13 +83,11 @@ if __name__ == '__main__':
     base_path = os.path.dirname(__file__)
     TRAINER_CONFIG_PATH = os.path.abspath(os.path.join(base_path, "trainer_config.yaml"))
 
-
     def run_training(sub_id, use_seed):
-        tc = TrainerController(env_path, run_id + "-" + str(sub_id), save_freq, curriculum_file, fast_simulation,
+        tc = SelfPlayTrainerController(env_path, run_id + "-" + str(sub_id), save_freq, curriculum_file, fast_simulation,
                                load_model, train_model, worker_id + sub_id, keep_checkpoints, lesson, use_seed,
                                docker_target_name, TRAINER_CONFIG_PATH, no_graphics)
         tc.start_learning()
-
 
     if env_path is None and num_runs > 1:
         raise TrainerError("It is not possible to launch more than one concurrent training session "

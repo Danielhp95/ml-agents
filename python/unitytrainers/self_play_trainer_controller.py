@@ -10,7 +10,7 @@ class SelfPlayTrainerController(TrainerController):
     def __init__(self, env_path, run_id, save_freq, curriculum_folder, fast_simulation, load, train,
                  worker_id, keep_checkpoints, lesson, seed, docker_target_name, trainer_config_path,
                  no_graphics):
-        super(SelfPlayTrainerController, self).__init__(self, env_path, run_id, save_freq,
+        super(SelfPlayTrainerController, self).__init__(env_path, run_id, save_freq,
                                                         curriculum_folder, fast_simulation,
                                                         load, train, worker_id, keep_checkpoints,
                                                         lesson, seed, docker_target_name, trainer_config_path,
@@ -24,7 +24,6 @@ class SelfPlayTrainerController(TrainerController):
         self.ghost_save_frequency = None
 
         self.elapsed_episodes = 0
-        raise UnityTrainerControllerException("The __init__ method was not implemented.")
 
     def _initialize_trainers(self, trainer_config, sess):
         super(SelfPlayTrainerController, self)._initialize_trainers(trainer_config, sess)
@@ -37,7 +36,7 @@ class SelfPlayTrainerController(TrainerController):
             raise UnityTrainerControllerException("Could not find a main brain to use in the self-play system. Make sure that one brain has the flag \"is_main\".")
 
         self.main_trainer_saver = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARAIBLES, scope=self.main_brain_trainer.graph_scope))
-        self.initialize_ghost_trainer_savers(self.main_brain_trainer.graph_scope, self.ghost_trainer)
+        self.initialize_self_play_trainers(self.main_brain_trainer.graph_scope, self.ghost_trainers)
 
     def initialize_self_play_trainers(self, main_trainer_scope, ghost_trainers):
         """
@@ -87,6 +86,10 @@ class SelfPlayTrainerController(TrainerController):
             self.resample_all_ghosts(sess)
 
     def resample_all_ghosts(self, sess):
+        """
+        Samples a historical policy for all ghost trainers
+        :param sess: Tensorflow session.
+        """
         for brain_name, saver in self.ghost_trainers.items():
             sampled_policy_checkpoint = self.sample_ghost_model()
             self.ghost_trainer_savers[brain_name].restore(sess, sampled_policy_checkpoint)
