@@ -35,8 +35,8 @@ class Trainer(object):
         self.sess = sess
         self.stats = {}
         self.summary_writer = None
-        if 'self_play' in trainer_parameters and bool(trainer_parameters['self_play']):
-            self.is_main = bool(trainer_parameters['is_main'])
+        if 'self_play' in trainer_parameters:
+            self.is_main = bool(trainer_parameters['self_play'])
 
     def __str__(self):
         return '''Empty Trainer'''

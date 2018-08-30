@@ -26,6 +26,8 @@ class SelfPlayTrainerController(TrainerController):
 
         # Self-play bookepping variables
         self.elapsed_episodes = 0
+        self.main_brain_saved_checkpoints = []
+        self.latest_policy_checkpoint_path = self.ghost_trainers_path + 'main_brain' + '-' + 'latest.cptk'
 
     def _initialize_trainers(self, trainer_config, sess):
         super(SelfPlayTrainerController, self)._initialize_trainers(trainer_config, sess)
@@ -78,31 +80,39 @@ class SelfPlayTrainerController(TrainerController):
         if global_step % self.ghost_save_frequency == 0 and global_step != 0 and self.train_model:
             checkpoint_path = self.ghost_trainers_path + 'main_brain' + '-' + str(global_step) + '.cptk'
             self.main_trainer_saver.save(sess, checkpoint_path)
-            print("Saving new opponents behaviour. Total checkpoints: {}".format(self.main_trainer_saver.last_checkpoints))
-            self.main_trainer_saver.last_checkpoints
+            print("Saving new opponents behaviour. Total checkpoints: {}".format(self.main_brain_saved_checkpoints))
+            self.main_brain_saved_checkpoints.append(checkpoint_path)
 
     def handle_episode_termination(self, curr_info, sess):
         # handle opponent policy change
-        curr_info = super(SelfPlayTrainerController, self).handle_episode_termination(curr_info, sess)
         if self.env.global_done:
-            print("Global done: {}".format(self.env.global_done))
             self.elapsed_episodes += 1
-            print("Episode finished")
             if self.should_change_ghost_model():
                 self.resample_all_ghosts(sess)
-        return curr_info
+        return super(SelfPlayTrainerController, self).handle_episode_termination(curr_info, sess)
 
     def resample_all_ghosts(self, sess):
         """
         Samples a historical policy for all ghost trainers
         :param sess: Tensorflow session.
         """
-        print("Sampling policies for all ghost brains")
-        print("Total checkpoints: {}".format(self.main_trainer_saver.last_checkpoints))
+        self.store_main_latest_policy(sess, self.main_trainer_saver, policy_path=self.latest_policy_checkpoint_path)
+        all_checkpoints = self.main_brain_saved_checkpoints + [self.latest_policy_checkpoint_path]
+        print("Sampling policies for {} ghost brains".format(len(self.ghost_trainers)))
+        print("Currently available checkpoints: {}\n {}".format(len(all_checkpoints),  all_checkpoints))
         for brain_name, saver in self.ghost_trainers.items():
-            sampled_policy_checkpoint = self.sample_ghost_model()
+            sampled_policy_checkpoint = self.sample_ghost_model(all_checkpoints=all_checkpoints)
             print("Resampling for {}. New policy: {}".format(brain_name, sampled_policy_checkpoint))
             self.ghost_trainer_savers[brain_name].restore(sess, sampled_policy_checkpoint)
+
+    def store_main_latest_policy(self, sess, main_trainer_saver, policy_path):
+        """
+        Stores latest policy before ghost brains sample a new policy to allow them
+        to copy the latest main policy.
+        :param sess: Tensorflow session.
+        :param main_trainer_saver: Tensorflow saver linked to the main brain
+        """
+        self.main_trainer_saver.save(sess, policy_path)
 
     def should_change_ghost_model(self):
         """
@@ -110,12 +120,12 @@ class SelfPlayTrainerController(TrainerController):
         """
         return self.elapsed_episodes % self.opponent_policy_change_interval == 0
 
-    def sample_ghost_model(self):
+    def sample_ghost_model(self, all_checkpoints=None):
         """
         Returns a model checkpoint resampled uniformly from the history of this model for the trainer in question.
+        :param: all_checkpoints: Tensorflow checkpoint files containing all available historical policies
         :return: String containing path to checkpoint to be used as new policy
         """
-        all_checkpoints = self.main_trainer_saver.last_checkpoints
-        print("Total checkpoints: {}".format(len(self.main_trainer_saver.last_checkpoints)))
         valid_checkpoints_slice = slice(math.ceil(self.delta * len(all_checkpoints)), len(all_checkpoints))
-        return random.choice(all_checkpoints[valid_checkpoints_slice])
+        opponent_sampling_distribution = random.choice
+        return opponent_sampling_distribution(all_checkpoints[valid_checkpoints_slice])
