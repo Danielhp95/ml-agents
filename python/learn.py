@@ -32,6 +32,7 @@ if __name__ == '__main__':
 ''')
 
     logger = logging.getLogger("unityagents")
+    logging.basicConfig(level=logging.DEBUG)
     _USAGE = '''
     Usage:
       learn (<env>) [options]
