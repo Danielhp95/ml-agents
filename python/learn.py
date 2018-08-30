@@ -10,6 +10,7 @@ from docopt import docopt
 
 
 from unitytrainers.self_play_trainer_controller import SelfPlayTrainerController
+from unitytrainers.trainer_controller import TrainerController
 from unitytrainers.exception import TrainerError
 
 if __name__ == '__main__':
