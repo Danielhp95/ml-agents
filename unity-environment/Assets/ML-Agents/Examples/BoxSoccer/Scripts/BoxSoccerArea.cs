@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.AccessControl;
 using UnityEngine;
 
-public class TennisArea : MonoBehaviour {
+public class BoxSoccerArea : MonoBehaviour {
 
     public GameObject ball;
     public GameObject agentA;
@@ -31,7 +31,7 @@ public class TennisArea : MonoBehaviour {
         }
         ballRb.velocity = new Vector3(0f, 0f, 0f);
         ball.transform.localScale = new Vector3(1, 1, 1);
-        ball.GetComponent<HitWall>().lastAgentHit = -1;
+        ball.GetComponent<SoccerBall>().lastAgentHit = -1;
     }
 
     void FixedUpdate() 
