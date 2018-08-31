@@ -85,5 +85,7 @@ public class BoxSoccerAgent : Agent
 
         transform.position = new Vector3(-invertMult * Random.Range(6f, 8f), -1.5f, 0f) + transform.parent.transform.position;
         agentRb.velocity = new Vector3(0f, 0f, 0f);
+        BoxSoccerArea area = myArea.GetComponent<BoxSoccerArea>();
+        area.MatchReset();
     }
 }

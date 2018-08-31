@@ -209,7 +209,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 161066687}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -228,6 +228,7 @@ GameObject:
   - component: {fileID: 175374537}
   - component: {fileID: 175374536}
   - component: {fileID: 175374535}
+  - component: {fileID: 175374541}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -327,6 +328,19 @@ Transform:
   m_Father: {fileID: 1504960729}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &175374541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 175374534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55abd5733d365474f87bef1aca56d2ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  areaObject: {fileID: 1504960727}
+  lastAgentHit: 0
 --- !u!114 &205556907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,12 +377,13 @@ Transform:
   m_GameObject: {fileID: 323850728}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1, z: 1}
   m_Children:
   - {fileID: 1508294256}
   - {fileID: 1541430438}
   - {fileID: 1060213313}
   - {fileID: 454572751}
+  - {fileID: 1070511615}
   m_Father: {fileID: 1504960729}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -695,13 +710,13 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1070511614}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1940796764}
   - {fileID: 1930851798}
-  m_Father: {fileID: 1504960729}
-  m_RootOrder: 2
+  m_Father: {fileID: 323850729}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1177428259
 GameObject:
@@ -917,8 +932,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 175374534}
-  agentA: {fileID: 0}
-  agentB: {fileID: 0}
+  agentA: {fileID: 2087312321}
+  agentB: {fileID: 1821942012}
 --- !u!4 &1504960729
 Transform:
   m_ObjectHideFlags: 0
@@ -931,7 +946,6 @@ Transform:
   m_Children:
   - {fileID: 175374540}
   - {fileID: 323850729}
-  - {fileID: 1070511615}
   - {fileID: 2087312322}
   - {fileID: 1821942013}
   m_Father: {fileID: 0}
@@ -1207,7 +1221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5298b73071a85e46962a49e212e6bf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSteps: 500
+  maxSteps: 5000
   trainingConfiguration:
     width: 80
     height: 80
@@ -1308,7 +1322,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4665004211769242, guid: 1a4999ff7ad800548a41e072371d0ed7, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 114877532224127442, guid: 1a4999ff7ad800548a41e072371d0ed7,
         type: 2}
@@ -1342,6 +1356,11 @@ Prefab:
         type: 2}
       propertyPath: invertX
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114877532224127442, guid: 1a4999ff7ad800548a41e072371d0ed7,
+        type: 2}
+      propertyPath: jumpForce
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1a4999ff7ad800548a41e072371d0ed7, type: 2}
@@ -1658,7 +1677,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4665004211769242, guid: 1a4999ff7ad800548a41e072371d0ed7, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 114877532224127442, guid: 1a4999ff7ad800548a41e072371d0ed7,
         type: 2}
@@ -1680,6 +1699,11 @@ Prefab:
       propertyPath: brain
       value: 
       objectReference: {fileID: 2084018024}
+    - target: {fileID: 114877532224127442, guid: 1a4999ff7ad800548a41e072371d0ed7,
+        type: 2}
+      propertyPath: jumpForce
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1a4999ff7ad800548a41e072371d0ed7, type: 2}
   m_IsPrefabParent: 0
