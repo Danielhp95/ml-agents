@@ -44,7 +44,7 @@ public class BoxSoccerAgent : Agent
         int action = Mathf.FloorToInt(vectorAction[0]);
      
         int direction = GetDirection(action);
-        if (action == 3)
+        if (action == 4)
         {
             jump();
         }
@@ -59,11 +59,11 @@ public class BoxSoccerAgent : Agent
     private static int GetDirection(int action)
     {
         int direction = 0;
-        if (action == 1)
+        if (action == 2)
         {
             direction = 1;
         }
-        else if (action == 2)
+        else if (action == 3)
         {
             direction = -1;
         }
