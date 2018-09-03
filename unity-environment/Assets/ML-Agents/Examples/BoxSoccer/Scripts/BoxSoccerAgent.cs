@@ -16,6 +16,7 @@ public class BoxSoccerAgent : Agent
 
     private Rigidbody agentRb;
     private Rigidbody ballRb;
+    private Rigidbody opponentRb;
     private float invertMult;
 
 
@@ -23,6 +24,7 @@ public class BoxSoccerAgent : Agent
     {
         agentRb = GetComponent<Rigidbody>();
         ballRb = ball.GetComponent<Rigidbody>();
+        opponentRb = opponent.GetComponent<Rigidbody>();
     }
 
     public override void CollectObservations()
@@ -31,6 +33,11 @@ public class BoxSoccerAgent : Agent
         AddVectorObs(transform.position.y - myArea.transform.position.y);
         AddVectorObs(invertMult * agentRb.velocity.x);
         AddVectorObs(agentRb.velocity.y);
+
+        AddVectorObs(invertMult * (opponent.transform.position.x - myArea.transform.position.x));
+        AddVectorObs(opponent.transform.position.y - myArea.transform.position.y);
+        AddVectorObs(invertMult * opponentRb.velocity.x);
+        AddVectorObs(opponentRb.velocity.y);
 
         AddVectorObs(invertMult * (ball.transform.position.x - myArea.transform.position.x));
         AddVectorObs(ball.transform.position.y - myArea.transform.position.y);
