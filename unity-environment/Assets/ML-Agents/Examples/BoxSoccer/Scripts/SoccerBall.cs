@@ -54,5 +54,6 @@ public class SoccerBall : MonoBehaviour
     {
         agentA.Done();
         agentB.Done();
+        area.MatchReset();
     }
 }
