@@ -14,76 +14,54 @@ public class BoxSoccerAgent : Agent
     public float groundMovementForce;
     public float maxSpeed;
 
-    private Rigidbody agentRb;
-    private Rigidbody ballRb;
-    private Rigidbody opponentRb;
+    private Rigidbody agentRigidBody;
+    private Rigidbody ballRigidBody;
+    private Rigidbody opponentRigidBody;
+    // This exists so that each agent sees it's world in the same way: if an agent is attacking right-left on-screen
+    // it should be be able to use the same policy as an agent attacking left-right.
     private float invertMult;
 
 
     public override void InitializeAgent()
     {
-        agentRb = GetComponent<Rigidbody>();
-        ballRb = ball.GetComponent<Rigidbody>();
-        opponentRb = opponent.GetComponent<Rigidbody>();
+        agentRigidBody = GetComponent<Rigidbody>();
+        ballRigidBody = ball.GetComponent<Rigidbody>();
+        opponentRigidBody = opponent.GetComponent<Rigidbody>();
     }
 
+    // Collect observations from the environment.
+    // These observations will inform the decisions made by the agent.
     public override void CollectObservations()
     {
         AddVectorObs(invertMult * (transform.position.x - myArea.transform.position.x));
-        AddVectorObs(transform.position.y - myArea.transform.position.y);
-        AddVectorObs(invertMult * agentRb.velocity.x);
-        AddVectorObs(agentRb.velocity.y);
-
-        AddVectorObs(invertMult * (opponent.transform.position.x - myArea.transform.position.x));
-        AddVectorObs(opponent.transform.position.y - myArea.transform.position.y);
-        AddVectorObs(invertMult * opponentRb.velocity.x);
-        AddVectorObs(opponentRb.velocity.y);
-
-        AddVectorObs(invertMult * (ball.transform.position.x - myArea.transform.position.x));
-        AddVectorObs(ball.transform.position.y - myArea.transform.position.y);
-        AddVectorObs(invertMult * ballRb.velocity.x);
-        AddVectorObs(ballRb.velocity.y);
+        AddVectorObs(invertMult * agentRigidBody.velocity.x);
     }
 
-
+    // Given an int in [0... 4), take the appropriate action.
+    // 0: no action, 1: move left, 2: move right; 3: jump.
     public override void AgentAction(float[] vectorAction, string textAction)
     {
+        // `action` here is the int in [0... 4) which represents our action.
+        // Other arguments to this function are for more complex environments than ours.
         int action = Mathf.FloorToInt(vectorAction[0]);
-     
-        int direction = GetDirection(action);
-        if (action == 4)
-        {
-            jump();
-        }
-
-        Vector3 directionVector = new Vector3(direction, 0, 0);
-        if (System.Math.Abs( agentRb.velocity.x) < maxSpeed )
-        {
-            agentRb.AddForce(directionVector * groundMovementForce, ForceMode.VelocityChange);
-        }
     }
 
+    // Take the jump action.
+    private void Jump()
+    {
+    }
+
+    // Given an int that represents an action, determine which x-axis direction it moves.
     private static int GetDirection(int action)
     {
         int direction = 0;
-        if (action == 2)
-        {
-            direction = 1;
-        }
-        else if (action == 3)
-        {
-            direction = -1;
-        }
 
         return direction;
     }
-
-    private void jump()
+    
+    // Take the move action in the specified direction.
+    private void Move(int direction)
     {
-        if (transform.position.y <= -2.75)
-        {
-            agentRb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
-        }
     }
 
     public override void AgentReset()
@@ -91,7 +69,7 @@ public class BoxSoccerAgent : Agent
         invertMult = invertX ? -1f : 1f;
 
         transform.position = new Vector3(-invertMult * Random.Range(6f, 8f), -1.5f, 0f) + transform.parent.transform.position;
-        agentRb.velocity = new Vector3(0f, 0f, 0f);
+        agentRigidBody.velocity = new Vector3(0f, 0f, 0f);
         BoxSoccerArea area = myArea.GetComponent<BoxSoccerArea>();
         area.MatchReset();
     }
