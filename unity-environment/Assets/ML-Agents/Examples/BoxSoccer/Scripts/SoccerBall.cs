@@ -19,34 +19,12 @@ public class SoccerBall : MonoBehaviour
         agentB = area.agentB.GetComponent<BoxSoccerAgent>();
     }
 
+    // Check collisions in order to add appropriate rewards to the agents
+    // and in order to know when to reset the scenario.
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("iWall"))
         {
-            if (collision.gameObject.name == "goalB")
-            {
-                agentA.AddReward(-1f);
-                agentB.AddReward(1f);
-                Reset();
-            }
-            else if (collision.gameObject.name == "goalA")
-            {
-                agentA.AddReward(1f);
-                agentB.AddReward(-1f);
-                Reset();
-            }
-        }
-
-        if (collision.gameObject.CompareTag("agent"))
-        {
-            lastAgentHit = collision.gameObject.name == "BoxA" ? 0 : 1;
-            if(lastAgentHit == 0)
-            {
-                agentA.AddReward(0.05f);
-            } else
-            {
-                agentB.AddReward(0.05f);
-            }
         }
     }
 
@@ -54,5 +32,6 @@ public class SoccerBall : MonoBehaviour
     {
         agentA.Done();
         agentB.Done();
+        area.MatchReset();
     }
 }
