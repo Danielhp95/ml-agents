@@ -68,16 +68,6 @@ namespace MLAgents
         /// Display options for external brain
         public void OnInspector()
         {
-			var serializedBrain = new SerializedObject(this);
-#if UNITY_EDITOR			
-			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-			EditorGUILayout.BeginHorizontal();
-			var ebt = serializedBrain.FindProperty("externalBrainType");
-			serializedBrain.Update();
-			EditorGUILayout.PropertyField(ebt , true);
-			serializedBrain.ApplyModifiedProperties();
-			EditorGUILayout.EndHorizontal();
-#endif		   
         }
     }
 }

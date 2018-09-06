@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoccerHitWall : MonoBehaviour
+public class SoccerBall : MonoBehaviour
 {
     public GameObject areaObject;
     public int lastAgentHit;
 
-    private TennisArea area;
+    private BoxSoccerArea area;
     private BoxSoccerAgent agentA;
     private BoxSoccerAgent agentB;
 
     // Use this for initialization
     void Start()
     {
-        area = areaObject.GetComponent<TennisArea>();
+        area = areaObject.GetComponent<BoxSoccerArea>();
         agentA = area.agentA.GetComponent<BoxSoccerAgent>();
         agentB = area.agentB.GetComponent<BoxSoccerAgent>();
     }

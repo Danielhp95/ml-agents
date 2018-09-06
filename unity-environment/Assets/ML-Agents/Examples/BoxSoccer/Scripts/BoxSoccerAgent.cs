@@ -16,6 +16,7 @@ public class BoxSoccerAgent : Agent
 
     private Rigidbody agentRb;
     private Rigidbody ballRb;
+    private Rigidbody opponentRb;
     private float invertMult;
 
 
@@ -23,6 +24,7 @@ public class BoxSoccerAgent : Agent
     {
         agentRb = GetComponent<Rigidbody>();
         ballRb = ball.GetComponent<Rigidbody>();
+        opponentRb = opponent.GetComponent<Rigidbody>();
     }
 
     public override void CollectObservations()
@@ -31,6 +33,11 @@ public class BoxSoccerAgent : Agent
         AddVectorObs(transform.position.y - myArea.transform.position.y);
         AddVectorObs(invertMult * agentRb.velocity.x);
         AddVectorObs(agentRb.velocity.y);
+
+        AddVectorObs(invertMult * (opponent.transform.position.x - myArea.transform.position.x));
+        AddVectorObs(opponent.transform.position.y - myArea.transform.position.y);
+        AddVectorObs(invertMult * opponentRb.velocity.x);
+        AddVectorObs(opponentRb.velocity.y);
 
         AddVectorObs(invertMult * (ball.transform.position.x - myArea.transform.position.x));
         AddVectorObs(ball.transform.position.y - myArea.transform.position.y);
@@ -44,7 +51,7 @@ public class BoxSoccerAgent : Agent
         int action = Mathf.FloorToInt(vectorAction[0]);
      
         int direction = GetDirection(action);
-        if (action == 3)
+        if (action == 4)
         {
             jump();
         }
@@ -59,11 +66,11 @@ public class BoxSoccerAgent : Agent
     private static int GetDirection(int action)
     {
         int direction = 0;
-        if (action == 1)
+        if (action == 2)
         {
             direction = 1;
         }
-        else if (action == 2)
+        else if (action == 3)
         {
             direction = -1;
         }

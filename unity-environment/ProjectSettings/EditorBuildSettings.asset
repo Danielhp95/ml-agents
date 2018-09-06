@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/ML-Agents/Examples/BoxSoccer/Scenes/BoxSoccer.unity
+    guid: 6c577edd7a717244c87e0c5571860ca7
   m_configObjects: {}
