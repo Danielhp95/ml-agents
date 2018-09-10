@@ -19,7 +19,7 @@ public class BoxSoccerArea : MonoBehaviour {
     
     public void MatchReset() 
     {
-        float ballOut = Random.Range(5.5f, 6f);
+        float ballOut = Random.Range(0f, 1f);
         int flip = Random.Range(0, 2);
         if (flip == 0)
         {
