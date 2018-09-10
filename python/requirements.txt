@@ -1,10 +1,9 @@
-tensorflow==1.7.1
-Pillow>=4.2.1
+tensorflow
+Pillow
 matplotlib
-numpy>=1.11.0
 jupyter
-pytest>=3.2.2
+pytest
 docopt
 pyyaml
-protobuf==3.6.0
-grpcio==1.11.0
+protobuf
+grpcio
