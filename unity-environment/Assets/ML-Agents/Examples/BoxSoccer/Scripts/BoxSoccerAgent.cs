@@ -26,6 +26,7 @@ public class BoxSoccerAgent : Agent
         agentRb = GetComponent<Rigidbody>();
         ballRb = ball.GetComponent<Rigidbody>();
         opponentRb = opponent.GetComponent<Rigidbody>();
+        invertMult = invertX ? -1f : 1f;
     }
 
     public override void CollectObservations()
@@ -59,7 +60,7 @@ public class BoxSoccerAgent : Agent
 
         Vector3 directionVector = new Vector3(direction, 0, 0);
         float currentPosition = Mathf.Abs(transform.position.x);
-        float newPosition = Mathf.Abs(transform.position.x + direction * groundMovementSpeed);
+        float newPosition = Mathf.Abs(transform.position.x + (direction * invertMult * groundMovementSpeed));
         if (newPosition < 10.65 || newPosition > currentPosition)
         {
             transform.Translate(directionVector * groundMovementSpeed);
