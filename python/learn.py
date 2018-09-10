@@ -48,7 +48,7 @@ def run_training(sub_id, run_seed, run_options):
     TRAINER_CONFIG_PATH = os.path.abspath(os.path.join(base_path, "trainer_config.yaml"))
 
     # Create controller and begin training.
-    tc = SelfPlayTrainerController(env_path, run_id + '-' + str(sub_id),
+    tc = TrainerController(env_path, run_id + '-' + str(sub_id),
                            save_freq, curriculum_file, fast_simulation,
                            load_model, train_model, worker_id + sub_id,
                            keep_checkpoints, lesson, run_seed,

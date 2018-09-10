@@ -12,6 +12,7 @@ public class BoxSoccerAgent : Agent
     public bool invertX;
     public float jumpForce;
     public float groundMovementForce;
+    public float groundMovementSpeed;
     public float maxSpeed;
 
     private Rigidbody agentRb;
@@ -51,15 +52,17 @@ public class BoxSoccerAgent : Agent
         int action = Mathf.FloorToInt(vectorAction[0]);
      
         int direction = GetDirection(action);
-        if (action == 4)
+        if (action == 1)
         {
             jump();
         }
 
         Vector3 directionVector = new Vector3(direction, 0, 0);
-        if (System.Math.Abs( agentRb.velocity.x) < maxSpeed )
+        float currentPosition = Mathf.Abs(transform.position.x);
+        float newPosition = Mathf.Abs(transform.position.x + direction * groundMovementSpeed);
+        if (newPosition < 10.65 || newPosition > currentPosition)
         {
-            agentRb.AddForce(directionVector * groundMovementForce, ForceMode.VelocityChange);
+            transform.Translate(directionVector * groundMovementSpeed);
         }
     }
 
