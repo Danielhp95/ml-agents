@@ -20,6 +20,9 @@ public class BoxSoccerAgent : Agent
     private Rigidbody opponentRb;
     private float invertMult;
 
+    private const float groundHeight = -2.75f;
+    private const float areaBoundary = 10.65f;
+
 
     public override void InitializeAgent()
     {
@@ -61,7 +64,7 @@ public class BoxSoccerAgent : Agent
         Vector3 directionVector = new Vector3(direction, 0, 0);
         float currentPosition = Mathf.Abs(transform.position.x);
         float newPosition = Mathf.Abs(transform.position.x + (direction * invertMult * groundMovementSpeed));
-        if (newPosition < 10.65 || newPosition > currentPosition)
+        if (newPosition < areaBoundary || newPosition > currentPosition)
         {
             transform.Translate(directionVector * groundMovementSpeed);
         }
@@ -84,7 +87,7 @@ public class BoxSoccerAgent : Agent
 
     private void jump()
     {
-        if (transform.position.y <= -2.75)
+        if (transform.position.y <= groundHeight)
         {
             agentRb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
