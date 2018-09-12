@@ -75,13 +75,11 @@ public class AgentSoccer : Agent
         string[] detectableObjects;
         if (team == Team.red)
         {
-            detectableObjects = new string[] { "ball", "redGoal", "blueGoal",
-                "wall", "redAgent", "blueAgent" };
+            detectableObjects = new string[] { "ball" };
         }
         else
         {
-            detectableObjects = new string[] { "ball", "blueGoal", "redGoal",
-                "wall", "blueAgent", "redAgent" };
+            detectableObjects = new string[] { "ball" };
         }
         AddVectorObs(rayPer.Perceive(rayDistance, rayAngles, detectableObjects, 0f, 0f));
         AddVectorObs(rayPer.Perceive(rayDistance, rayAngles, detectableObjects, 1f, 0f));
