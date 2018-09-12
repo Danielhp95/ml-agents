@@ -24,15 +24,15 @@ public class SoccerBallController : MonoBehaviour
 
     }
 
+    // Check if the ball collides with the goal to reset the area and give appropriate rewards
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.CompareTag(redGoalTag)) //ball touched red goal
         {
             area.GoalTouched(AgentSoccer.Team.blue);
-        }
-        if (col.gameObject.CompareTag(blueGoalTag)) //ball touched blue goal
+        } else if (col.gameObject.CompareTag(blueGoalTag)) //ball touched blue goal
         {
-            area.GoalTouched(AgentSoccer.Team.red);
+
         }
     }
 }

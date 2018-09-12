@@ -91,23 +91,25 @@ public class SoccerFieldArea : MonoBehaviour
         }
     }
 
+    // Loop through all players and give them an appropriate reward
     public void GoalTouched(AgentSoccer.Team scoredTeam)
     {
         foreach (PlayerState ps in playerStates)
         {
+            // 
             if (ps.agentScript.team == scoredTeam)
             {
-                RewardOrPunishPlayer(ps, academy.strikerReward, academy.goalieReward);
+                RewardPlayer(ps);
             }
             else
             {
-                RewardOrPunishPlayer(ps, academy.strikerPunish, academy.goaliePunish);
             }
+
+            //Ignore the rest of this method: it's housekeeping stuff
             if (academy.randomizePlayersTeamForTraining)
             {
                 ps.agentScript.ChooseRandomTeam();
             }
-
             if (scoredTeam == AgentSoccer.Team.red)
             {
                 StartCoroutine(GoalScoredSwapGroundMaterial(academy.redMaterial, 1));
@@ -123,17 +125,22 @@ public class SoccerFieldArea : MonoBehaviour
         }
     }
 
-    public void RewardOrPunishPlayer(PlayerState ps, float striker, float goalie)
+    // Give the player/agent the appropriate reward for their team scoring
+    public void RewardPlayer(PlayerState ps)
     {
         if (ps.agentScript.agentRole == AgentSoccer.AgentRole.striker)
         {
-            ps.agentScript.AddReward(striker);
-        }
-        if (ps.agentScript.agentRole == AgentSoccer.AgentRole.goalie)
+            ps.agentScript.AddReward(academy.strikerReward);
+        } else if (ps.agentScript.agentRole == AgentSoccer.AgentRole.goalie)
         {
-            ps.agentScript.AddReward(goalie);
         }
         ps.agentScript.Done();  //all agents need to be reset
+    }
+
+    // Give the player/agent the appropriate punishment for their team conceding
+    public void PunishPlayer(PlayerState ps)
+    {
+
     }
 
 
