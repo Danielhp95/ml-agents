@@ -25,6 +25,10 @@ public class AgentSoccer : Agent
     Renderer agentRenderer;
     RayPerception rayPer;
 
+    public float moveSpeed = 1f;
+    public float rotationSpeed = 1f;
+    public float strikerStrafeSpeed = 1f;
+
     public void ChooseRandomTeam()
     {
         team = (Team)Random.Range(0, 2);
@@ -62,6 +66,8 @@ public class AgentSoccer : Agent
         playerState.playerIndex = playerIndex;
     }
 
+    // Here you define your agent's eyes: what do you allow your agent to see.
+    // Here we will use raytracing
     public override void CollectObservations()
     {
         float rayDistance = 20f;
@@ -80,81 +86,60 @@ public class AgentSoccer : Agent
         AddVectorObs(rayPer.Perceive(rayDistance, rayAngles, detectableObjects, 0f, 0f));
         AddVectorObs(rayPer.Perceive(rayDistance, rayAngles, detectableObjects, 1f, 0f));
     }
-
-    public void MoveAgent(float[] act)
+    
+    public void MoveAgent(int action)
     {
-        Vector3 dirToGo = Vector3.zero;
-        Vector3 rotateDir = Vector3.zero;
 
-        int action = Mathf.FloorToInt(act[0]);
 
         // Goalies and Strikers have slightly different action spaces.
         if (agentRole == AgentRole.goalie)
         {
-            kickPower = 0f;
-            switch (action)
-            {
-                case 0:
-                    dirToGo = transform.forward * 1f;
-                    kickPower = 1f;
-                    break;
-                case 1:
-                    dirToGo = transform.forward * -1f;
-                    break;
-                case 3:
-                    dirToGo = transform.right * -1f;
-                    break;
-                case 2:
-                    dirToGo = transform.right * 1f;
-                    break;
-            }
+
         }
         else
         {
-            kickPower = 0f;
-            switch (action)
-            {
-                case 0:
-                    dirToGo = transform.forward * 1f;
-                    kickPower = 1f;
-                    break;
-                case 1:
-                    dirToGo = transform.forward * -1f;
-                    break;
-                case 2:
-                    rotateDir = transform.up * 1f;
-                    break;
-                case 3:
-                    rotateDir = transform.up * -1f;
-                    break;
-                case 4:
-                    dirToGo = transform.right * -0.75f;
-                    break;
-                case 5:
-                    dirToGo = transform.right * 0.75f;
-                    break;
-            }
+
         }
-        transform.Rotate(rotateDir, Time.deltaTime * 100f);
-        agentRB.AddForce(dirToGo * academy.agentRunSpeed,
-                         ForceMode.VelocityChange);
+    }
+
+    private void TakeGoalieAction (int action)
+    {
 
     }
 
+    private void TakeStrikerAction (int action)
+    {
 
+    }
+
+    private Vector3 GetTranslation(int action)
+    {
+        return new Vector3();
+    }
+
+    private Vector3 GetRotation(int action)
+    {
+        return new Vector3();
+    }
+    
+    // If the agent is moving forward set the kick force to 1f else, set it to 0f
+    private void IsKicking(int action)
+    {
+
+    }
+
+    // Given an int in [-1... 6), take the appropriate action.
+    // For strikers
+    // -1: no action, 0: move forward, 1: move backward, 2: move left; 3: move right, 4: rotate left, 5: rotate right
+    // For Goalies
+    // -1: no action, 0: move forward, 1: move backward, 2: move left; 3: move right.
+    //
+    // We will also add some rewards here eventually.
     public override void AgentAction(float[] vectorAction, string textAction)
     {
-        // Existential penalty for strikers.
-        if (agentRole == AgentRole.striker)
-        {
-            AddReward(-1f / 3000f);
-        }
-        // Existential bonus for goalies.
-        if (agentRole == AgentRole.goalie)
-        {
-            AddReward(1f / 3000f);
-        }
-        MoveAgent(vectorAction);
+        // Our action is received as an array of floats for more complicated scenarios
+        // All we care about here is the first action as an int, however
+        int action = Mathf.FloorToInt(vectorAction[0]);
 
     }
 
