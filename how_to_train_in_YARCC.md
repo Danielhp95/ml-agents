@@ -78,11 +78,11 @@ The job file should be inside of the `scratch/<username>/python/` directory. And
 #$ -l nvidia_k80=1
 #$ -q iggi-cluster
 
-python learn.py environments/<environmentName>.x86_64 --train
+python3 learn.py environments/<environmentName>.x86_64 --train
 ```
 
 Explanation:
-+ `#$ -cwd -V`: **mandatory flag** sets the current working directory to the directory of the job being submitted, as the default is the forbidden `home/` directory.
++ `-cwd -V`: **mandatory flag** sets the current working directory to the directory of the job being submitted, as the default is the forbidden `home/` directory.
 + `-l h_rt`: **mandatory flag** estimated job length, used by YARCC's job scheduler.
 + `-l h_vmem=128G`: **mandatory flag**
 + `-o`: file where stdout will be redirected to
