@@ -4,17 +4,18 @@ In order to run experiemnts using Unity, The following dependencies are necessar
 
 #### Unity
 
-Of course, the Unity game engine is required.
-LINUX ONLY: [Download Unity from the last post in this thread](https://forum.unity.com/threads/unity-on-linux-release-notes-and-known-issues.350256/page-2)
-Tested in Unity 2018.2.0b7.
+Of course, the Unity game engine is required.  
+[Linux installation download link](https://forum.unity.com/threads/unity-on-linux-release-notes-and-known-issues.350256/page-2)  
+This code has been tested on the following Unity verisions:  
++ Unity 2018.2.0b7.
 
 #### Python
 
-We recommend using a python virtual environment. More concretely, we recommend using [pipenv](https://pypi.org/project/pipenv/), a powerful virtual environment and package manager.
+We recommend using a python virtual environment to manage Python dependencies. For this we recommend using [pipenv](https://pypi.org/project/pipenv/), a powerful virtual environment and package management tool.
 
 ### Creating a virtual Python environment using Pipenv
 
-1. Inside of the desired directory run `pipenv install --python 3.6`
+1. Inside of `ml-agents/python/` directory run `pipenv install --python 3.6`. This will try to install the dependencies captured in `requirements.txt`. If it fails,  try steps 2, 3. Otherwise you are done.
 2. Activate the virtual environment by running `pipenv shell`
 3. Install requirements from `requirements.txt` by running `pip install -r requirements.txt`
 
@@ -22,9 +23,9 @@ We recommend using a python virtual environment. More concretely, we recommend u
 ### Building an environment
 
 #### Build prerequisites:
-+ Set scripting runtime version to `.NET 4.x Equivalent`.
++ Set scripting runtime version to `.NET 4.x Equivalent` inside PlayerSettings -> Other Settings -> Scripting Runtime Version.
 + Set `ENABLE_TENSORFLOW` inside PlayerSettings -> Other Settings -> Scripting Define Symbols.
-+ Make sure that the relevant `Brain`s are set to external.
++ Make sure that the relevant `Brain`s are set to external in the inspector.
 
 #### Create a build inside of Unity Headleslly for Linux
 1. Go to Build Settings.
@@ -32,18 +33,12 @@ We recommend using a python virtual environment. More concretely, we recommend u
 2. Set **Target platform** to Linux (x86_64 build).
 This will create two files:
 
-`
-<environmentName>_Data/
-<environmentName>.x86_64
-`
+` <environmentName>_Data/` and `environmentName>.x86_64`
 
 We strongly recomend to move these files inside an `environments/` directory inside of the ml-agents `python/` directory. Such that we get:
 
-`
-python/environments/<environmentName>_Data/
-python/environments/<environmentName>.x86_64
-`
+`python/environments/<environmentName>_Data/` and `python/environments/<environmentName>.x86_64`
 
 ### Running training from Python
-This is done by executing the command
+Inside of the `ml-agents/python/` directory, run the command:  
 `python learn.py environments/<environmentName>.x86_64 --train`
