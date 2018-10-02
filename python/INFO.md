@@ -12,7 +12,7 @@ Tested in Unity 2018.2.0b7.
 
 We recommend using a python virtual environment. More concretely, we recommend using [pipenv](https://pypi.org/project/pipenv/), a powerful virtual environment and package manager.
 
-#### Creating a virtual Python environment using Pipenv
+### Creating a virtual Python environment using Pipenv
 
 1. Inside of the desired directory run `pipenv install --python 3.6`
 2. Activate the virtual environment by running `pipenv shell`
@@ -44,6 +44,6 @@ python/environments/<environmentName>_Data/
 python/environments/<environmentName>.x86_64
 `
 
-#### Running training from Python
+### Running training from Python
 This is done by executing the command
 `python learn.py environments/<environmentName>.x86_64 --train`
