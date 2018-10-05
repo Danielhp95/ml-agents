@@ -11,7 +11,7 @@ This code has been tested on the following Unity verisions:
 
 #### Python
 
-We recommend using a python virtual environment to manage Python dependencies. For this we recommend using [pipenv](https://pypi.org/project/pipenv/), a powerful virtual environment and package management tool.
+We recommend using a python virtual environment to manage Python dependencies. For this we recommend using [pipenv](https://pypi.org/project/pipenv/), a powerful virtual environment and package management tool. 
 
 ### Creating a virtual Python environment using Pipenv
 
@@ -19,21 +19,24 @@ We recommend using a python virtual environment to manage Python dependencies. F
 2. Activate the virtual environment by running `pipenv shell`
 3. Install requirements from `requirements.txt` by running `pip install -r requirements.txt`
 
+#### Known Problems of this section.
+- If you lack grpc dependences after installing using `requirements.txt`, please install the dependence using `pip install grpcio`.
+- Some linux distributions have problems installing `pipenv`. **If you have a fresh [conda](https://anaconda.org/) environment, you can continue from the step three of this section.**
 
 ### Building an environment
 
 #### Build prerequisites:
-+ Set scripting runtime version to `.NET 4.x Equivalent` inside PlayerSettings -> Other Settings -> Scripting Runtime Version.
-+ Set `ENABLE_TENSORFLOW` inside PlayerSettings -> Other Settings -> Scripting Define Symbols.
++ Set scripting runtime version to `.NET 4.x Equivalent` inside File-> Build Setting-> PlayerSettings -> Other Settings -> Scripting Runtime Version.
++ Set `ENABLE_TENSORFLOW` inside File-> Build Setting-> PlayerSettings -> Other Settings -> Scripting Define Symbols.
 + Make sure that the relevant `Brain`s are set to external in the inspector.
 
 #### Create a build inside of Unity Headleslly for Linux
-1. Go to Build Settings.
+1. Go to File -> Build Settings.
 1. Tick **Headless mode** box.
 2. Set **Target platform** to Linux (x86_64 build).
 This will create two files:
 
-` <environmentName>_Data/` and `environmentName>.x86_64`
+` <environmentName>_Data/` and `<environmentName>.x86_64`
 
 We strongly recomend to move these files inside an `environments/` directory inside of the ml-agents `python/` directory. Such that we get:
 
